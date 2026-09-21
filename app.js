@@ -1,8 +1,11 @@
+require("dotenv").config();
 const express = require('express');
+
+const jwtoken = require("jsonwebtoken");
 const app = express();
 const port = process.env.MIPUERTO || 3003; 
 //importar mis midellaware
-const registromidelware = require("./middleware/registromiddleware")
+const registromidelware = require("./validaciones/middleware/registromiddleware")
 // Librería fs y path
 const sistemaArchivo = require("fs");
 const ruta = require("path");
@@ -13,8 +16,10 @@ const { validarAprendiz } = require("./validaciones/validaciones");
 
 // Importar y configurar multer
 const multer = require("multer");
-const manejadorErrores = require('./middleware/manejadoErrores');
+
+const manejadorErrores = require('./validaciones/middleware/manejadoErrores');
 const almacen = multer.diskStorage({
+
   destination: (req, file, cb) => { 
     cb(null, "misImagenes/");
   },
@@ -25,12 +30,29 @@ const almacen = multer.diskStorage({
 });
 const subir = multer({ storage: almacen });
 
+const autenticacionmiddlewawre = require ("./validaciones/middleware/autenticacionmidellware")
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //usar nuestro midellware
 app.use(registromidelware)
-app.use(manejadorErrores)
+
+app.post('/api/login', (req, res) => {
+    const { usuario, clave } = req.body;
+    const dbUsuario = {usuario: "dilan", Clave: "12345"};
+    if (usuario !== dbUsuario.usuario || clave !== dbUsuario.Clave) {
+        return res.json({ mensaje: "Usuario o contraseña incorrecta"
+        });
+      }
+    const token = jwtoken.sign(
+      { user : req.usuario}, 
+      process.env.jwt_secreto,
+        {expiresIn:"1h"}
+    )
+    res.json({ token })
+});
+
 app.use('/misImagenes', express.static(ruta.join(__dirname, 'misImagenes')));
 
 // GET: Obtener todos los aprendices
@@ -122,9 +144,18 @@ app.delete('/api/aprendices/:id', (req, res) => {
     sistemaArchivo.writeFile(rutaMiArchivo, JSON.stringify(listaFiltrada, null, 2), (error) => {
       if (error) return res.status(500).json({ error: "No se puede escribir en el archivo" });
       res.status(200).json({ Mensaje: "Aprendiz eliminado exitosamente" });
-    });
-  });
-});
+    })
+  })
+})
+
+app.get("/api/error", (req, res, next) => {
+  next (new Error("Error simulado"))
+}) 
+app.get("/api/rutaprotegida", autenticacionmiddlewawre, (req, res) => {
+  res.json({ MENSAJE : "Ruta de acceso con token"})
+})
+
+app.use(manejadorErrores)
 
 app.listen(port, () => {
   console.log(`Servidor en funcionamiento en el puerto: http://localhost:${port}`);

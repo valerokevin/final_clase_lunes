@@ -1,33 +1,9 @@
 [
   {
-    "nombre": "jiselt",
+    "nombre": "dilna",
     "edad": 17,
-    "correo": "jiseltzambrano",
+    "correo": "dilkan",
     "imagen": "url",
     "clave": "1526"
-  },
-  {
-    "id": 1,
-    "nombre": "jiselt",
-    "edad": 17,
-    "correo": "jiseltzambrano@gmail.com",
-    "clave": "87716",
-    "imagen": "sin Imagen"
-  },
-  {
-    "id": 4,
-    "nombre": "jiseltt",
-    "edad": 10,
-    "correo": "jiseltzambrano@gmail.com",
-    "clave": "16963",
-    "imagen": "sin Imagen"
-  },
-  {
-    "id": 5,
-    "nombre": "jiseltt",
-    "edad": 20,
-    "correo": "jiseltzambrano@gmail.com",
-    "clave": "16068",
-    "imagen": "sin Imagen"
   }
 ]
